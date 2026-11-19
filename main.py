@@ -14,7 +14,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 def ask_gemini(question):
     response = client.models.generate_content(
-        model="gemini-2.5-flash-lite",
+        model="gemini-3.5-flash-lite",
         contents=f"Biologiya o'qituvchisisan. O'zbek tilida, qisqa, 10 gapdan oshmasin. Savol: {question}",
         config={"max_output_tokens": 700}
     )
