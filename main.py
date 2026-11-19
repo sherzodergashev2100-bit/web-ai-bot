@@ -5,9 +5,9 @@ from ddgs import DDGS
 import google.generativeai as genai
 
 # SHU YERGA O'ZINGNIKINNI YOZ
-BOT_TOKEN = "BOT_TOKEN"
-GEMINI_KEY = "GEMINI_KEY"
-
+import os
+BOT_TOKEN = os.environ["BOT_TOKEN"]
+GEMINI_KEY = os.environ["GEMINI_KEY"]
 genai.configure(api_key=GEMINI_KEY)
 model = genai.GenerativeModel("gemini-2.0-flash")
 
