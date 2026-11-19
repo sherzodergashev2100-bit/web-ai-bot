@@ -5,8 +5,8 @@ from ddgs import DDGS
 import google.generativeai as genai
 
 # SHU YERGA O'ZINGNIKINNI YOZ
-BOT_TOKEN = "BOT_TOKENING"
-GEMINI_KEY = "GEMINI_KALITING"
+BOT_TOKEN = "BOT_TOKEN"
+GEMINI_KEY = "GEMINI_KEY"
 
 genai.configure(api_key=GEMINI_KEY)
 model = genai.GenerativeModel("gemini-2.0-flash")
