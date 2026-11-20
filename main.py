@@ -60,7 +60,7 @@ def admin_kb():
     return ReplyKeyboardMarkup(
         [[KeyboardButton("👥 Users"), KeyboardButton("📩 Mail to users"), KeyboardButton("📁 Add file")],
          [KeyboardButton("📕 Add pdf"), KeyboardButton("✏️ Change"), KeyboardButton("🤖 Ask Manu AI")],
-         [KeyboardButton("📊 Statistika"), KeyboardButton("🆘 Support")]],         
+         [KeyboardButton("📊 Statistika"), KeyboardButton("🆘 Support")],         
          [KeyboardButton("🖼️ Rasm yasash"), KeyboardButton("🎨 AI Rasm")],
         resize_keyboard=True
     )
