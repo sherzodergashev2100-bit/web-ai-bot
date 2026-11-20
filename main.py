@@ -169,13 +169,7 @@ def kerakli_parcha(savol: str, matn: str):
 
 async def manual_ai_javob(savol: str, user_id):
     # 1. AI Rasm so'ralsa - halol "qila olmayman"
-    if any(s in savol.lower() for s in RASMI_SOZLAR):
-        return (
-            "❌ Bu rasmni qila olmayman.\n\n"
-            "Men AI rasm generatori emasman. Realistik hujayra, odam, hayvon rasmini chiza olmayman.\n\n"
-            "✅ O'rniga senga Pillow kartochka yasab beraman — chiroyli mnemonika kartochka.\n"
-            "🖼️ Rasm yasash ni bos va mavzuni yoz."
-        )
+    
     # 2. Qayta yoz
     if savol.lower() in ["qayta yoz", "qayta", "tushunmadim", "boshqacha tushuntir", "soddaroq", "yana bir marta"]:
         x = XOTIRA.get(user_id)
