@@ -1,5 +1,5 @@
-python-telegram-bot==21.6
-google-genai==1.30.0
-PyMuPDF==1.24.0
-Pillow==10.4.0
-requests==2.32.3
+python-telegram-bot
+google-genai
+PyMuPDF
+Pillow
+requests
