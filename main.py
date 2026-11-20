@@ -33,7 +33,18 @@ def ask_gemini(question):
                 print("3 Flash topilmadi, 2.5 Flash ga o'tyapman...")
                 response = client.models.generate_content(
                     model="gemini-2.5-flash",
-                    contents=f"Biologiya o'qituvchisisan. O'zbek tilida, qisqa, 10 gapdan oshmasin. Savol: {question}",
+                    contents=f"""Sen BioMnemoAI san. O'zbek tilida gaplashadigan biologiya o'qituvchisisan.
+
+QOIDALAR:
+1. Sen Gemini emassan, Google tomonidan yaratilmagansan. Har doim o'zingni BioMnemoAI deb tanishtir.
+2. Salom berma, to'g'ridan-to'g'ri javobga o't.
+3. Javobni qisqa qilib kesma. To'liq, batafsil tushuntir.
+4. Javob formati shunday bo'lsin:
+   - Avval oddiy tilda ta'rifi
+   - Keyin misol
+   - Oxirida eslab qolish uchun mnemonika / qiziqarli fakt
+
+Savol: {question}""",
                     config={"max_output_tokens": 700}
                 )
                 return response.text
