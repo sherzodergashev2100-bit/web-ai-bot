@@ -60,7 +60,8 @@ def admin_kb():
     return ReplyKeyboardMarkup(
         [[KeyboardButton("👥 Users"), KeyboardButton("📩 Mail to users"), KeyboardButton("📁 Add file")],
          [KeyboardButton("📕 Add pdf"), KeyboardButton("✏️ Change"), KeyboardButton("🤖 Ask Manu AI")],
-         [KeyboardButton("📊 Statistika"), KeyboardButton("🆘 Support")]],
+         [KeyboardButton("📊 Statistika"), KeyboardButton("🆘 Support")]],         
+         [KeyboardButton("🖼️ Rasm yasash"), KeyboardButton("🎨 AI Rasm")]],
         resize_keyboard=True
     )
 
@@ -68,7 +69,7 @@ def orqaga_kb():
     return ReplyKeyboardMarkup([[KeyboardButton("🔙 Orqaga")]], resize_keyboard=True)
 
 # ================= PILLOW - MNEMONIKA KARTOCHKA =================
-def mnemonika_rasmi_yasa(matn: str, sarlavha: str = "Manual AI"):
+def mnemonika_rasmi_yasa(matn: str, sarlavha: str = "Manu AI"):
     img = Image.new("RGB", (1080, 1080), (18, 32, 62))
     draw = ImageDraw.Draw(img)
     draw.rectangle([0, 0, 1080, 140], fill=(0, 180, 120))
