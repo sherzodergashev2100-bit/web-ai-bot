@@ -413,14 +413,20 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     q = update.callback_query
     await q.answer()
     if q.data == "users_100":
-        royxat = "\n".join([f"@{u.get('username','-')} - {u.get('firstname','')}" for u in list(USERS.values())[:100]])
-        await q.message.reply_text(f"👥 Birinchi 100 ta:\n\n{royxat or 'Foydalanuvchi yoq'}")
-        elif q.data == "mail_yubor":
+        royxat = ""
+        for u in list(USERS.values())[:100]:
+            royxat += "@" + str(u.get('username','-')) + " - " + str(u.get('firstname','')) + "\n"
+        await q.message.reply_text("Birinchi 100 ta:\n\n" + (royxat or "Foydalanuvchi yoq"))
+    elif q.data == "mail_yubor":
         matn = VAQTINCHA.get(q.from_user.id, {}).get("matn", "")
         yuborildi = 0
         for uid in list(USERS.keys()):
             try:
                 await context.bot.send_message(chat_id=int(uid), text=matn)
+                yuborildi += 1
+            except:
+                pass
+        await q.message.reply_text("Yuborildi: " + str(yuborildi) + " / " + str(len(USERS)) + " ta foydalanuvchiga") context.bot.send_message(chat_id=int(uid), text=matn)
                 yuborildi += 1
             except:
                 pass
