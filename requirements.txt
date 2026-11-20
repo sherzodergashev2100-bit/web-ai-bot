@@ -1,5 +1,3 @@
-python-telegram-bot
-google-genai
-PyMuPDF
+python-telegram-bot==20.7
 Pillow
-requests
+google-genai
