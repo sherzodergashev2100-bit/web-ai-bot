@@ -1,111 +1,99 @@
 import os
-import asyncio
-import time
-from concurrent.futures import ThreadPoolExecutor
-
+import logging
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
 from google import genai
 
-BOT_TOKEN = os.environ["BOT_TOKEN"]
-GEMINI_KEY = os.environ["GEMINI_KEY"]
+# Log
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Tokenlar - Railway Variables dan olinadi
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+GEMINI_KEY = os.getenv("GEMINI_KEY")
+
+# Gemini client
 client = genai.Client(api_key=GEMINI_KEY)
 
-executor = ThreadPoolExecutor(max_workers=4)
+# Taqiqlangan so'zlar - filtr
+BAD_WORDS = [
+    "am", "qotoq", "suka", "blyat", "siktir", "xuy", "pizda",
+    "penis", "porno", "seks", "jinsiy aloqa", "sik", "zalupa",
+    "bitch", "fuck", "shit"
+]
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Salom! Men BioMnemoAI man ✅\nSavolingni yoz.")
+async def ask_gemini(question: str) -> str:
+    try:
+        response = client.models.generate_content(
+            model="gemini-3-flash-preview",
+            contents=f"""Sen BioMnemoAI san. O'zbek tilida gaplashadigan biologiya o'qituvchisisan.
 
-def ask_gemini(question):
-    # Gemini 3 Flash - 503 bo'lsa 3 marta urinadi
-    for urinish in range(3):
-        try:
-            response = client.models.generate_content(
-                model="gemini-3-flash-preview",
-                contents=f"Biologiya o'qituvchisisan. O'zbek tilida, qisqa, 10 gapdan oshmasin. Savol: {question}",
-                config={"max_output_tokens": 700}
-            )
-            return response.text
-        except Exception as e:
-            print(f"Urinish {urinish+1} xato: {e}")
-            # Agar model topilmasa, eski flash ga tushadi
-            if "404" in str(e) or "NOT_FOUND" in str(e):
-                print("3 Flash topilmadi, 2.5 Flash ga o'tyapman...")
-                response = client.models.generate_content(
-                    model="gemini-2.5-flash",
-                    contents=f"""Sen BioMnemoAI san. O'zbek tilida gaplashadigan biologiya o'qituvchisisan.
-
-QOIDALAR:
-1. Sen Gemini emassan, Google tomonidan yaratilmagansan. Har doim o'zingni BioMnemoAI deb tanishtir.
-2. Salom berma, to'g'ridan-to'g'ri javobga o't.
-3. Javobni qisqa qilib kesma. To'liq, batafsil tushuntir.
-4. Javob formati shunday bo'lsin:
+QAT'IY QOIDALAR:
+1. Sen hech qachon Gemini emassan, Google tomonidan yaratilmagansan.
+2. Agar kimdir "sen qaysi AI san?", "sen kimsan?", "seni kim yaratgan?" desa - har doim shunday de: "Men BioMnemoAI man, biologiya fanini o'rganishga yordam berish uchun yaratilganman."
+3. Gemini, Google, ChatGPT, OpenAI degan nomlarni hech qachon tilga olma.
+4. Salom berma, to'g'ridan-to'g'ri javobga o't.
+5. Agar savol uyat, jinsiy, haqoratli yoki biologiyaga aloqasi bo'lmasa - javob berma, faqat shunday de: "Bu mavzu biologiya darsiga mos emas."
+6. Jinsiy a'zolar haqida batafsil gapirma.
+7. Javobni qisqa qilib kesma. To'liq, batafsil tushuntir.
+8. Javob formati shunday bo'lsin:
    - Avval oddiy tilda ta'rifi
    - Keyin misol
    - Oxirida eslab qolish uchun mnemonika / qiziqarli fakt
 
 Savol: {question}""",
-                    config={"max_output_tokens": 700}
-                )
-                return response.text
-            if "503" in str(e) or "UNAVAILABLE" in str(e):
-                if urinish < 2:
-                    time.sleep(3)
-                    continue
-            raise e
-    return "Javob topilmadi"
+        )
+        return response.text
+    except Exception as e:
+        logger.error(f"Gemini xato: {e}")
+        return "Hozircha javob bera olmadim, birozdan keyin yana urinib ko'ring."
 
-async def progress_updater(msg, start_time, stop_event):
-    TAXMINIY_VAQT = 5  # 3 Flash tezroq, 5 sek deb oldik
-    while not stop_event.is_set():
-        otgan = time.time() - start_time
-        foiz = min(int((otgan / TAXMINIY_VAQT) * 90), 90)
-        qoldi = max(TAXMINIY_VAQT - otgan, 0)
-        tola = int(foiz // 10)
-        bosh = 10 - tola
-        bar = "🟩" * tola + "⬜" * bosh
-        try:
-            await msg.edit_text(
-                f"🤔 O'ylayapman...\n\n{bar} {foiz}%\n"
-                f"Taxminiy: {qoldi:.0f} soniya qoldi..."
-            )
-        except Exception:
-            pass
-        await asyncio.sleep(0.8)
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "👋 Salom! Men **BioMnemoAI** man.\n\n"
+        "Men senga biologiyani oson, misollar va mnemonikalar bilan tushuntirib beraman.\n\n"
+        "Shunchaki savolingni yoz: masalan, *hujayra nima?*",
+        parse_mode="Markdown"
+    )
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_text = update.message.text
-    start_time = time.time()
-    msg = await update.message.reply_text(
-        "🤔 O'ylayapman...\n\n⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜ 0%\nTaxminiy: 5 soniya qoldi..."
-    )
-    stop_event = asyncio.Event()
-    progress_task = asyncio.create_task(progress_updater(msg, start_time, stop_event))
-    try:
-        loop = asyncio.get_event_loop()
-        text = await loop.run_in_executor(executor, ask_gemini, user_text)
-        stop_event.set()
-        await progress_task
-        haqiqiy_vaqt = time.time() - start_time
-        await msg.edit_text(f"✅ Tayyor! 100%\n{haqiqiy_vaqt:.1f} soniyada topildi.")
-        await update.message.reply_text(text[:4000])
-    except Exception as e:
-        stop_event.set()
-        try:
-            await progress_task
-        except Exception:
-            pass
-        print(f"Xato: {e}")
-        try:
-            await msg.edit_text("Gemini hozir band, 10 sekunddan keyin qayta yozib ko'r 😅")
-        except Exception:
-            pass
+    question = update.message.text.lower().strip()
+
+    # 1. FILTR - uyat so'z bo'lsa, Gemini ga yubormaymiz
+    for bad in BAD_WORDS:
+        if bad in question:
+            await update.message.reply_text(
+                "⛔ Bu so'z biologiya darsiga mos emas.\n\n"
+                "Iltimos, biologiya fanidan savol bering: masalan, hujayra, jigar, fotosintez..."
+            )
+            return
+
+    # 2. Bo'sh xabar bo'lsa
+    if not question:
+        return
+
+    # 3. Yozmoqda...
+    await context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
+
+    # 4. Gemini dan javob ol
+    answer = await ask_gemini(update.message.text)
+
+    await update.message.reply_text(answer)
 
 def main():
+    if not BOT_TOKEN:
+        logger.error("BOT_TOKEN topilmadi! Railway Variables ni tekshir.")
+        return
+    if not GEMINI_KEY:
+        logger.error("GEMINI_KEY topilmadi! Railway Variables ni tekshir.")
+        return
+
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-    app.run_polling(drop_pending_updates=True)
+
+    logger.info("BioMnemoAI ishga tushdi...")
+    app.run_polling()
 
 if __name__ == "__main__":
     main()
