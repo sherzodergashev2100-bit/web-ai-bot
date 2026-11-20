@@ -186,7 +186,7 @@ async def manual_ai_javob(savol: str, user_id):
         return resp.text
     # 3. Mavzu filtri
     ruxsat, barcha = mavzu_ruxsatmi(savol)
-        if not ruxsat:
+    if not ruxsat:
         mavzular_txt = ', '.join(barcha) if barcha else 'Hali PDF qoshilmagan'
         return "⛔ Bu savol ruxsat berilgan mavzularga kirmaydi.\n\nRuxsatli mavzular: " + mavzular_txt + "\n\nIltimos, shu mavzulardan savol bering."
     # 4. PDF dan parcha topish
