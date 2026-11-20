@@ -7,8 +7,8 @@ from telegram.ext import Application, CommandHandler, MessageHandler, ContextTyp
 from google import genai
 
 # ---------- SOZLAMALAR ----------
-TOKEN = os.getenv("TOKEN")
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+TOKEN = os.getenv("BOT_TOKEN")
+GEMINI_API_KEY = os.getenv("GEMINI_KEY")
 ADMIN_ID = int(os.getenv("ADMIN_ID", "0"))  # o'zingni Telegram ID'ingni Railway Variables ga yoz
 
 logging.basicConfig(level=logging.INFO)
