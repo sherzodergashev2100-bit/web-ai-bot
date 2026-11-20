@@ -426,11 +426,7 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 yuborildi += 1
             except:
                 pass
-        await q.message.reply_text("Yuborildi: " + str(yuborildi) + " / " + str(len(USERS)) + " ta foydalanuvchiga") context.bot.send_message(chat_id=int(uid), text=matn)
-                yuborildi += 1
-            except:
-                pass
-        await q.message.reply_text(f"✅ Yuborildi: {yuborildi} / {len(USERS)} ta foydalanuvchiga")
+        await q.message.reply_text("Yuborildi: " + str(yuborildi) + " / " + str(len(USERS)) + " ta foydalanuvchiga")
     elif q.data == "mail_ozgartir":
         await q.message.reply_text("✏️ O'zgartirish:\n[Media] - yangi media yuboring\n[Matn] - yangi matn yozing", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Media", callback_data="mail_media_oz"), InlineKeyboardButton("Matn", callback_data="mail_matn_oz")]]))
     elif q.data == "mail_matn_oz":
